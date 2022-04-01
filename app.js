@@ -15,9 +15,6 @@ let worklist = [];
 
 var item="";
 
-// Define port number as 2000
-const port = 2000;
-
 // Routes HTTP GET requests to the specified path "/" with the specified callback function
 app.set('view engine', 'ejs');
 
@@ -179,6 +176,10 @@ app.post("/delete", function(req,res){
 //file 옮겨가기 function
 
 
+let port = process.env.PORT;
+if(port == null || port == ""){
+  port = 2000;
+}
 // Make the app listen on port 2000
 app.listen(port, function() {
   console.log('Server listening on http://localhost:' + port);
