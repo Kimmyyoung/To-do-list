@@ -11,7 +11,8 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static("Public"));
+
 
 //MongoDB Section 
 mongoose.connect("mongodb+srv://admin-hykim:Test123@cluster0.s6stj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",{useNewUrlParser: true});
@@ -21,6 +22,7 @@ mongoose.connect("mongodb+srv://admin-hykim:Test123@cluster0.s6stj.mongodb.net/m
 const Itemschema = {
   name : String
 };
+
 const Item = mongoose.model("Item", Itemschema);
 //Create Model base on Schema (If you see the DB list : Items)
 
