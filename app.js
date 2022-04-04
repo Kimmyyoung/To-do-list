@@ -146,7 +146,7 @@ app.post("/delete", function(req, res){
     Item.findByIdAndRemove(checkedItemId, function(err){
       if (!err) {
         console.log("Successfully deleted checked item.");
-        res.redirect("/"+listName);
+        res.redirect("/");
       }
     });
   } else {
