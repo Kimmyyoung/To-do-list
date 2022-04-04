@@ -11,8 +11,7 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
+app.use(express.static(path.join(__dirname, '/public')));
 
 //MongoDB Section 
 mongoose.connect("mongodb+srv://admin-hykim:Test123@cluster0.s6stj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",{useNewUrlParser: true});
