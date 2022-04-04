@@ -5,15 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 // Connects a mongoDB
 const _ = require('lodash');
-
-
 const app = express();
-
-
-
-let worklist = [];
-
-var item="";
 
 // Routes HTTP GET requests to the specified path "/" with the specified callback function
 app.set('view engine', 'ejs');
@@ -21,14 +13,15 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+
 //MongoDB Section 
 mongoose.connect("mongodb+srv://admin-hykim:Test123@cluster0.s6stj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",{useNewUrlParser: true});
 
+
+//DB "Itemslist" Schema (Todolist)
 const Itemschema = {
   name : String
 };
-//DB "Itemslist" Schema (Todolist)
-
 const Item = mongoose.model("Item", Itemschema);
 //Create Model base on Schema (If you see the DB list : Items)
 
@@ -37,30 +30,30 @@ const item1 = new Item({
 });
 
 const item2 = new Item({
-  name: "item2"
+  name: "You can add new Item"
 });
 
 const item3 = new Item({
-  name: "item3"
+  name: "<--- Click checkbox for delete to-do list"
 });
 
 const defaultItems = [item1, item2, item3];
 
 
 
-
-const listschema = {
+//New DB for New Page
+const listSchema = {
   name: String,
   items: [Itemschema]
 };
-//New DB list Schema (for new page)
-const List = mongoose.model("List", listschema);
-//New model from "new DB" 
+const List = mongoose.model("List", listSchema);
+
 
 
 
 app.get('/', function(req, res) {
   
+  // ------------- Date DB ------------
   // var today = new Date();
   // var option = {
   //   weekday: "long",
@@ -69,8 +62,9 @@ app.get('/', function(req, res) {
   // }; 
   // var day = today.toLocaleDateString("en-US", option); ---> Create Date without DBs
   
-  Item.find({}, function(err, foundItems){
 
+  // ------------Find Item ----------------
+  Item.find({}, function(err, foundItems){
     if(foundItems.length === 0){
         Item.insertMany(defaultItems, function(err){
           if(err){
@@ -92,32 +86,28 @@ app.get('/', function(req, res) {
 
 
 //<--------------------- New Page ------------------------->
-app.get("/:customeListName", function(req,res){
-  //URL save the name "customelistname"
+app.get("/:customListName", function(req, res){
+  const customListName = _.capitalize(req.params.customListName);
 
-  const customelistname = _.capitalize(req.params.customeListName);
-
-  List.findOne({name: customelistname}, function(err, foundList){
-    if(!err){
-      if(!foundList){}
-          const list = new List({
-            name : customelistname,
-            items: defaultItems
-          });
-          list.save();
-          res.redirect("/" + customelistname);
-          //If the list doesn't exist, Create new list.
-      }else{
-        res.render("lists", {listTitle : foundList.name, newListItems: foundList.items});
-        //If the list exist, show that list.
+  List.findOne({name: customListName}, function(err, foundList){
+    if (!err){
+      if (!foundList){
+        //Create a new list
+        const list = new List({
+          name: customListName,
+          items: defaultItems
+        });
+        list.save();
+        res.redirect("/" + customListName);
+      } else {
+        //Show an existing list
+        res.render("lists", {listTitle: foundList.name, newListItems: foundList.items});
       }
     }
-  )
+  });
 });
 
-
-
-// Input Data Area
+//----------- Hompage Post (Today to-do list) --------------
 app.post ("/", function(req,res) {
 
     const itemName = req.body.itemName;
@@ -137,7 +127,7 @@ app.post ("/", function(req,res) {
         foundList.items.push(item);
         foundList.save();
         res.redirect("/"+listName);
-      })
+      });
     }
     // Add data only the case which hase same listname (DB) = listname (input).
     // So, If you road every different page, it would be use different list.
@@ -145,42 +135,37 @@ app.post ("/", function(req,res) {
 });
 
 
-app.post("/delete", function(req,res){
-  const checkItemId = req.body.checkbox;
+//----------- Delete Post --------------
+
+app.post("/delete", function(req, res){
+  const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
 
-  if(listName === "Today"){
-    Item.findByIdAndRemove(checkItemId, function(err){
-      if(!err){
-        console.log("successfully delete!");
-        res.redirect("/");
-      }
-    });
-  }else{
-    List.findOneAndUpdate({name:listName},{$pull : {items: {_id: checkItemId}}}, function(err, foundList){
-      if(!err){
+  if (listName === "Today") {
+    Item.findByIdAndRemove(checkedItemId, function(err){
+      if (!err) {
+        console.log("Successfully deleted checked item.");
         res.redirect("/"+listName);
       }
-    })
+    });
+  } else {
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
+      if (!err){
+        res.redirect("/"+listName);
+      }
+    });
   }
-  
+
 });
 //CheckboxId : Item delete (Delete Method : findByAndRemove)
 
 
-// if(currentDay === 6 || currentDay === 0){
-//   res.sendFile(__dirname + "/Public/weekend.html");
-// }else {
-//   res.sendFile(__dirname + "/Public/weekday.html");
-// }
-//file 옮겨가기 function
-
-
+//----------- connect port --------------
 let port = process.env.PORT;
 if(port == null || port == ""){
-  port = 2000;
+  port = 3000;
 }
-// Make the app listen on port 2000
+// Make the app listen on port 3000
 app.listen(port, function() {
   console.log('Server listening on http://localhost:' + port);
 });

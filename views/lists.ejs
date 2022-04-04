@@ -1,24 +1,21 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="css/style.css">
-    <title>To Do List Project</title>
-  </head>
-  <body>
-    <div class="box" id="heading">
-      <h1><%= listTitle %></h1>
-    </div>
+<%-include("header")-%>
+
+
+      <div class="box" id="heading">
+        <h1><%= listTitle %></h1> 
+      </div>
 
       <div class="box">
 
      <%   newListItems.forEach(function(item){ %>
-        <form class="item" action="/delete" method="post">
-          <div class="item">
-            <input type="checkbox" name="checkbox" value="<%=item._id%>" onchange="this.form.submit()"/>
-            <p><%=item.name%></p>
-          </div>
-        </form>  
+        
+      <form action="/delete" method="post">
+        <div class="item">
+          <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
+          <p><%=item.name%></p>
+        </div>
+        <input type="hidden" name="listName" value="<%= listTitle %>"></input>
+      </form>
         
      <%   }) %>
 
@@ -27,8 +24,7 @@
           <button type="submit" name="list" value= <%= listTitle %> >+</button>
         </form>
 
+        
       </div>
     </div>
-
-  </body>
-</html>
+<%-include("footer")-%>
