@@ -3,7 +3,7 @@
 
 <div align=center>
 
-<img src="https://capsule-render.vercel.app/api?type=cylinder&color=auto&text=Hello%20World!&fontAlignY=45&fontSize=40&height=120&animation=blinking&desc=I%20am%20Kimmy:)&descAlignY=70" />
+<img src="https://capsule-render.vercel.app/api?type=cylinder&color=auto&text=Hello%20World!&fontAlignY=45&fontSize=40&height=120&animation=blinking&desc=My%20name%20is%20Kim%20:)&descAlignY=70" />
 
 <h3> :wave: Introduction </h3>
 <hr/>
